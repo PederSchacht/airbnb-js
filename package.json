@@ -9,6 +9,7 @@
   "private": true,
   "scripts": {
     "start"     : "DBNAME=airbnb supervisor app/app.js",
+    "mongod"    : "mongod --config ~/download/config-files/mongodb.conf"
     "test"      : "mocha --recursive test",
     "testwatch" : "mocha -w --recursive test",
     "coveralls" : "./node_modules/mocha/bin/mocha test --recursive -r blanket -R mocha-lcov-reporter | coveralls"
