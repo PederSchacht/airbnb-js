@@ -9,8 +9,8 @@
   "private": true,
   "scripts": {
     "start"     : "DBNAME=airbnb supervisor app/app.js",
-    "test"      : "mocha --recursive test",
-    "testwatch" : "mocha -w --recursive test",
+    "test"      : "mocha --reporter nyan --recursive test",
+    "testwatch" : "mocha --reporter nyan -w --recursive test",
     "coveralls" : "./node_modules/mocha/bin/mocha test --recursive -r blanket -R mocha-lcov-reporter | coveralls"
   },
   "dependencies": {

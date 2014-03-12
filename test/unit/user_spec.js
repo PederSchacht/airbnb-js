@@ -1,12 +1,14 @@
+/* jshint expr:true */
 
 'use strict';
 
 process.env.DBNAME = 'airbnb-test';
 var expect = require('chai').expect;
+var Mongo = require('mongodb');
 var User;
-var u1, u2, u3;
 
 describe('User', function(){
+
   before(function(done){
     var initMongo = require('../../app/lib/init-mongo');
     initMongo.db(function(){
@@ -17,31 +19,44 @@ describe('User', function(){
 
   beforeEach(function(done){
     global.nss.db.dropDatabase(function(err, result){
-      u1 = new User ({email:'bob@aol.com', password:'1234'});
-      u2 = new User({email:'matt@aol.com', password: 'abcd'});
-      u3 = new User({email:'eril@aol.com', password: 'bcdf'});
-      //u1.hashPassword(function(){
-        //u1.insert(function(){
-          //u2.hashPassword(function(){
-            //u2.insert(function(){
-              //u3.hashPassword(function(){
-                //u3.insert(function(){
-      done();
-      //          });
-        //      });
-          //  });
-      //    });
-       // });
-    //  });
+      var sue = new User({role:'host', email:'sue@nomail.com', password:'abcd'});
+      sue.register(function(){
+        done();
+      });
     });
   });
 
+
   describe('new', function(){
     it('should create a new User object', function(){
-      u1 = new User ({role:'host', email:'bob@aol.com', password:'1234'});
+      var u1 = new User({role:'host', email:'bob@nomail.com', password:'1234'});
       expect(u1).to.be.instanceof(User);
-      expect(u1.email).to.equal('bob@aol.com');
+      expect(u1.email).to.equal('bob@nomail.com');
       expect(u1.password).to.equal('1234');
+      expect(u1.role).to.equal('host');
     });
   });
+
+  describe('#register', function(){
+    it('should register a new User', function(done){
+      var u1 = new User({role:'guest', email:'pete-nss@outlook.com', password:'1234'});
+      u1.register(function(err, body){
+        expect(err).to.not.be.ok;
+        expect(u1.password).to.have.length(60);
+        expect(u1._id).to.be.instanceof(Mongo.ObjectID);
+        body = JSON.parse(body);
+        expect(body.id).to.be.ok;
+        done();
+      });
+    });
+    it('should not register a duplicate User', function(done){
+      var u1 = new User({role:'guest', email:'sue@nomail.com', password:'abcd'});
+      u1.register(function(){
+        expect(u1._id).to.be.undefined;
+        done();
+      });
+    });
+  });
+
 });
+
